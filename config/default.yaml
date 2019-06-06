@@ -1,0 +1,10 @@
+server:
+  port: 8080
+  endpoint: "/metrics"
+pinger:
+  metric-name: "pinger_metrics"
+  hosts:
+    - "https://en.wikipedia.org/"
+    - "http://example.com/"
+  # interval in second
+  interval: 3
