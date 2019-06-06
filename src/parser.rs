@@ -27,7 +27,7 @@ pub mod config {
   const DEFAULT_YAML: &'static str = r#"
   server:
     port: 8080
-    endpoint: "/metrics"
+    host: "127.0.0.1"
   pinger:
     metric-name: "pinger_metrics"
     hosts:

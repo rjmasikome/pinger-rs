@@ -20,13 +20,16 @@ impl Metrics {
     Ok(Metrics { registry, config,})
   }
 
-  fn polling(&self, counter: Counter, url: &'static str) {
+  fn polling(&self, counter: Counter, url_serde: Value) {
 
     thread::spawn(move || {
 
       let delay = periodic_ms(3000);
       let mut x = 0;
       let mut easy = Easy::new();
+
+      let url = url_serde.as_str()
+        .expect("URL must be set");
 
       loop {
 
@@ -63,10 +66,7 @@ impl Metrics {
       .as_sequence().unwrap().to_vec();
 
     for url in urls {
-      match url_clone.as_str() {
-        Some(x) => self.polling(counter, x),
-        None => println!("No match found :("),
-      }
+      self.polling(counter.clone(), url);
     }
   }
 }
