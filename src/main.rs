@@ -2,6 +2,7 @@ use actix_web::{web, App, HttpServer, HttpRequest, HttpResponse};
 use actix_rt;
 use prometheus::{Registry, TextEncoder, Encoder};
 use std::sync::{Mutex, Arc};
+use chrono::prelude::*;
 
 mod metrics;
 mod parser;
@@ -18,6 +19,9 @@ fn index(state: web::Data<Arc<Mutex<Registry>>>, req: HttpRequest) -> HttpRespon
   // Gather the metrics
   let metric_families = state.lock().unwrap().gather();
   encoder.encode(&metric_families, &mut buffer).unwrap();
+
+  let dt = Local::now();
+  println!("{}: Scraped. Details: ", dt);
   println!("{:?}", req);
 
   HttpResponse::Ok()
