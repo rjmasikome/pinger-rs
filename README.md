@@ -12,4 +12,5 @@ There was a CRUD microservice based on Diesel and Rocket. But I wasn't so satisf
 2. Check out the `default.yaml` at `config` directory
 3. Do the changes necessary
 4. `cargo run`
-5. Go to endpoint `/metrics`
+5. Wait until the dispatched requests
+6. Go to endpoint `/metrics`
