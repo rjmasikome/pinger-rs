@@ -1,9 +1,12 @@
 use actix_web::{web, App, HttpServer, HttpRequest, HttpResponse};
+use actix_rt;
 use prometheus::{Registry, TextEncoder, Encoder};
 use std::sync::{Mutex, Arc};
 
 mod metrics;
 mod parser;
+
+const ENDPOINT: &str = "/metrics";
 
 use parser::config;
 
@@ -23,6 +26,8 @@ fn index(state: web::Data<Arc<Mutex<Registry>>>, req: HttpRequest) -> HttpRespon
 
 fn main() -> std::io::Result<()> {
 
+  let sys = actix_rt::System::new("pinger-rs");
+
   let conf = config::get_config(None).expect("Failed to load YAML config.");
 
   let metrics_o = metrics::Metrics::new(conf.clone())?;
@@ -35,13 +40,23 @@ fn main() -> std::io::Result<()> {
   let port = conf["server"]["port"].as_str().unwrap_or("8080");
 
   // TODO: Make endpoint configurable if possible
-
+  // Encounter error with lifetime 
+  // `borrowed value does not live long enough`
+  // Probably the lib doesn't own the endpoint param straightaway
+  // Or something with the lifetime of var that still not well understood by me
+  //
+  // let endpoint = conf["server"]["endpoint"].as_str().unwrap_or("/metrics");
+  
   HttpServer::new(move ||
     App::new()
       .data(shared_registry.clone())
       .service(
-        web::resource("/metrics").to(index))
+        web::resource(ENDPOINT).to(index))
       )
       .bind(format!("{}:{}", host, port))?
-      .run()
+      .start();
+
+  
+  println!("Endpoint ready to be scraped at: {}:{}{}", host, port, ENDPOINT);
+  sys.run()
 }

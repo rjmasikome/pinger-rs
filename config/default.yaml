@@ -3,9 +3,10 @@ server:
   host: "127.0.0.1"
 
 pinger:
+  debug: true
+  # interval in second
+  interval: 5
   metric-name: "pinger_metrics"
   hosts:
     - "https://en.wikipedia.org/"
     - "https://www.google.com"
-  # interval in second
-  interval: 3

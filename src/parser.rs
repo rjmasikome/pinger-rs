@@ -29,12 +29,13 @@ pub mod config {
     port: 8080
     host: "127.0.0.1"
   pinger:
+    debug: true
+    # interval in second
+    interval: 5
     metric-name: "pinger_metrics"
     hosts:
       - "https://en.wikipedia.org/"
-      - "http://example.com/"
-    # interval in second
-    interval: 3"#;
+      - "http://example.com/""#;
 
   pub fn get_config(filename: Option<&'static str>) -> Option<Value> {
     let content: String = super::read_file(filename.unwrap_or("./config/default.yaml"))
