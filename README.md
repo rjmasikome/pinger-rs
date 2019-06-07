@@ -1,6 +1,6 @@
 # pinger-rs
 Lifetime checker based on Rust :gear:
-It Will export the data to the endpoint that can be scraped by Prometheus :fire: - WIP
+It will export the data to the endpoint that can be scraped by Prometheus :fire: - WIP
 
 ## How to run
 1. Make sure `cargo` and `rustc` are installed
