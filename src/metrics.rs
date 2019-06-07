@@ -23,8 +23,10 @@ impl Metrics {
 
   fn polling(&self, counter_vec: CounterVec, url_serde: Value) {
 
+    // TODO: FIX THIS
+    // Super ugly parsing
     let interval = self.config["pinger"]["interval"] 
-      .as_str().unwrap_or("10");
+      .as_u64().unwrap_or(10).to_string();
     let interval_ms: u32 = interval.parse().unwrap_or(10) * 1000;
 
 

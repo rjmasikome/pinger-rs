@@ -37,7 +37,7 @@ fn main() -> std::io::Result<()> {
 
   // let server_conf = conf["server"];
   let host = conf["server"]["host"].as_str().unwrap_or("127.0.0.1");
-  let port = conf["server"]["port"].as_str().unwrap_or("8080");
+  let port = conf["server"]["port"].as_u64().unwrap_or(8080);
 
   // TODO: Make endpoint configurable if possible
   // Encounter error with lifetime 
