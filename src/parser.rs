@@ -28,6 +28,7 @@ pub mod config {
   server:
     port: 8080
     host: "127.0.0.1"
+    endpoint: "/metrics"
   pinger:
     debug: true
     # interval in second

@@ -21,14 +21,12 @@ impl Metrics {
     Ok(Metrics { registry, config,})
   }
 
-  fn polling(&self, counter_vec: CounterVec, url_serde: Value) {
+  fn polling(&self, counter_vec: CounterVec, urls: Vec<Value>) {
 
-    // TODO: FIX THIS
-    // Super ugly parsing
+    // TODO: To fix ugly parsing of interval_ms
     let interval = self.config["pinger"]["interval"] 
       .as_u64().unwrap_or(10).to_string();
     let interval_ms: u32 = interval.parse().unwrap_or(10) * 1000;
-
 
     let debug = self.config["pinger"]["debug"] 
       .as_bool().unwrap_or(true);
@@ -38,35 +36,38 @@ impl Metrics {
       let delay = periodic_ms(interval_ms);
       let mut easy = Easy::new();
 
-
-      let url = url_serde.as_str()
-        .expect("URL must be set");
-
-      println!("Polling {} every {} seconds", url, interval_ms / 1000);
+      println!("Polling every {} seconds", interval_ms / 1000);
       println!("Debug is set to {}", debug);
 
       loop {
 
         delay.recv().unwrap();
 
-        easy.url(url).unwrap();
-        easy.write_function(|data| {
-          Ok(data.len())
-        }).unwrap();
-        
-        let dt = Local::now();
+        for url_serde in urls.clone() {
 
-        match easy.perform() {
-          Ok(_) => {
+          let url = url_serde.as_str()
+            .expect("URL must be set");
 
-            let code = easy.response_code().unwrap().to_string();
-            counter_vec.with_label_values(&[&code, url]).inc();
-            
-            if debug {
-              println!("{}: {} - {}", dt, code, url);
-            }
-          },
-          Err(_) => println!("{}: Error accessing {}", dt, url),
+          easy.url(url).unwrap();
+          easy.write_function(|data| {
+            Ok(data.len())
+          }).unwrap();
+          
+          let dt = Local::now();
+
+          match easy.perform() {
+
+            Ok(_) => {
+
+              let code = easy.response_code().unwrap().to_string();
+              counter_vec.with_label_values(&[&code, url]).inc();
+              
+              if debug {
+                println!("{}: {} - {}", dt, code, url);
+              }
+            },
+            Err(_) => println!("{}: Error accessing {}", dt, url),
+          }
         }
       }
     });
@@ -88,8 +89,6 @@ impl Metrics {
     let urls: Vec<Value> = self.config["pinger"]["hosts"]
       .as_sequence().unwrap().to_vec();
 
-    for url in urls {
-      self.polling(counter.clone(), url);
-    }
+    self.polling(counter.clone(), urls);
   }
 }

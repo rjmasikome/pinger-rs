@@ -7,11 +7,9 @@ use chrono::prelude::*;
 mod metrics;
 mod parser;
 
-const ENDPOINT: &str = "/metrics";
-
 use parser::config;
 
-fn index(state: web::Data<Arc<Mutex<Registry>>>, req: HttpRequest) -> HttpResponse {
+fn metrics_ep(state: web::Data<Arc<Mutex<Registry>>>, req: HttpRequest) -> HttpResponse {
 
   let mut buffer = vec![];
   let encoder = TextEncoder::new();
@@ -39,28 +37,22 @@ fn main() -> std::io::Result<()> {
   let registry = metrics_o.registry;
   let shared_registry = Arc::new(Mutex::new(registry.clone()));
 
-  // let server_conf = conf["server"];
   let host = conf["server"]["host"].as_str().unwrap_or("127.0.0.1");
   let port = conf["server"]["port"].as_u64().unwrap_or(8080);
 
-  // TODO: Make endpoint configurable if possible
-  // Encounter error with lifetime 
-  // `borrowed value does not live long enough`
-  // Probably the lib doesn't own the endpoint param straightaway
-  // Or something with the lifetime of var that still not well understood by me
-  //
-  // let endpoint = conf["server"]["endpoint"].as_str().unwrap_or("/metrics");
-  
+  let endpoint = conf["server"]["endpoint"].as_str().unwrap_or("/metrics");
+  let endpoint_resource = endpoint.to_string();
+
   HttpServer::new(move ||
     App::new()
       .data(shared_registry.clone())
       .service(
-        web::resource(ENDPOINT).to(index))
+        web::resource(&endpoint_resource).to(metrics_ep))
       )
       .bind(format!("{}:{}", host, port))?
       .start();
 
   
-  println!("Endpoint ready to be scraped at: {}:{}{}", host, port, ENDPOINT);
+  println!("Endpoint ready to be scraped at: http://{}:{}{}", host, port, endpoint);
   sys.run()
 }
