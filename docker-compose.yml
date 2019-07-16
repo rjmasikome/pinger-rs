@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+
+  pinger-rs:
+    container_name: pinger-rs
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: pinger-rs/pinger-rs

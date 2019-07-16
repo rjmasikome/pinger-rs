@@ -9,8 +9,8 @@ It will export the data to the endpoint that can be scraped by Prometheus :fire:
 - [x] Configurable polling duration
 - [x] Configurable metrics name
 - [x] Debug for every polling (Configurable)
-- [ ] Configurable healthcheck endpoint (e.g for Kubernetes)
-- [ ] Config file name as executable argument parameter
+- [x] Configurable healthcheck endpoint (e.g for Kubernetes)
+- [x] Config file name as executable argument parameter
 
 ## How to run
 1. Make sure `cargo` and `rustc` are installed
