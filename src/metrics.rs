@@ -20,12 +20,11 @@ impl Metrics {
   }
 
   fn polling(&self, counter_vec: CounterVec, urls: Vec<Value>) {
-    // TODO: To fix ugly parsing of interval_ms
-    let interval = self.config["pinger"]["interval"]
-      .as_u64()
-      .unwrap_or(10)
-      .to_string();
-    let interval_ms: u32 = interval.parse().unwrap_or(10) * 1000;
+
+    let interval_ms = self.config["pinger"]["interval"]
+      .as_u64() // Can't parse straight to u32
+      .unwrap_or(10) as u32
+      * 1000;
 
     let debug = self.config["pinger"]["debug"].as_bool().unwrap_or(true);
 
