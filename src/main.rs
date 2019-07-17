@@ -1,9 +1,9 @@
-use actix_web::{web, App, HttpServer, HttpRequest, HttpResponse};
 use actix_rt;
-use prometheus::{Registry, TextEncoder, Encoder};
-use std::sync::{Mutex, Arc};
+use actix_web::{web, App, HttpRequest, HttpResponse, HttpServer};
 use chrono::prelude::*;
+use prometheus::{Encoder, Registry, TextEncoder};
 use std::env;
+use std::sync::{Arc, Mutex};
 
 mod metrics;
 mod parser;
@@ -12,10 +12,8 @@ use parser::config;
 
 // Metrics Endpoint handler
 fn metrics_ep(state: web::Data<Arc<Mutex<Registry>>>, req: HttpRequest) -> HttpResponse {
-
   let mut buffer = vec![];
   let encoder = TextEncoder::new();
-  
   // Gather the metrics
   let metric_families = state.lock().unwrap().gather();
   encoder.encode(&metric_families, &mut buffer).unwrap();
@@ -24,32 +22,27 @@ fn metrics_ep(state: web::Data<Arc<Mutex<Registry>>>, req: HttpRequest) -> HttpR
   println!("{}: Scraped. Details: ", dt);
   println!("{:?}", req);
 
-  HttpResponse::Ok()
-    .body(format!("{}", String::from_utf8(buffer).unwrap()))
+  HttpResponse::Ok().body(format!("{}", String::from_utf8(buffer).unwrap()))
 }
 
 // Healthcheck/Liveness Endpoint handler
 fn liveness_ep(req: HttpRequest) -> HttpResponse {
-    println!("{:?}", req);
+  println!("{:?}", req);
 
-    HttpResponse::Ok()
-        .content_type("text/plain")
-        .body(format!("Ok!"))
+  HttpResponse::Ok()
+    .content_type("text/plain")
+    .body(format!("Ok!"))
 }
 
 // Main function
 fn main() -> std::io::Result<()> {
-
   let sys = actix_rt::System::new("pinger-rs");
-
   let args: Vec<String> = env::args().collect();
   let mut filename_arg = None;
 
   if args.len() > 1 {
     filename_arg = Some(&args[1]);
   }
-
-  println!("{:?}", args);
 
   let conf = config::get_config(filename_arg).expect("Failed to load YAML config.");
 
@@ -69,20 +62,23 @@ fn main() -> std::io::Result<()> {
   let metrics_endpoint_str = metrics_endpoint.to_string();
   let liveness_endpoint_str = liveness_endpoint.to_string();
 
-  HttpServer::new(move ||
+  HttpServer::new(move || {
     App::new()
       .data(shared_registry.clone())
-      .service(
-        web::resource(&liveness_endpoint_str).to(liveness_ep))
-      .service(
-        web::resource(&metrics_endpoint_str).to(metrics_ep))
-      )
-      .bind(format!("{}:{}", host, port))?
-      .start();
+      .service(web::resource(&liveness_endpoint_str).to(liveness_ep))
+      .service(web::resource(&metrics_endpoint_str).to(metrics_ep))
+  })
+  .bind(format!("{}:{}", host, port))?
+  .start();
 
-  
-  println!("Endpoint ready to be scraped at: http://{}:{}{}", host, port, metrics_endpoint);
-  println!("Healthcheck ready at: http://{}:{}{}", host, port, liveness_endpoint);
+  println!(
+    "Endpoint ready to be scraped at: http://{}:{}{}",
+    host, port, metrics_endpoint
+  );
+  println!(
+    "Healthcheck ready at: http://{}:{}{}",
+    host, port, liveness_endpoint
+  );
 
   sys.run()
 }

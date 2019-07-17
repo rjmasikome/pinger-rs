@@ -6,8 +6,8 @@ fn read_file(filename: &str) -> Option<String> {
   let mut file_handle = std::fs::File::open(filename).expect("file not found");
   let mut content = String::new();
   match file_handle.read_to_string(&mut content) {
-      Ok(_) => Some(content),
-      Err(_) => None,
+    Ok(_) => Some(content),
+    Err(_) => None,
   }
 }
 
@@ -39,12 +39,10 @@ pub mod config {
       - "http://example.com/""#;
 
   pub fn get_config(opt_filename: Option<&String>) -> Option<Value> {
-
     let default_filename = "./config/default.yaml".to_string();
     let filename = opt_filename.unwrap_or(&default_filename);
 
-    let content: String = super::read_file(&filename)
-            .unwrap_or_else(|| String::from(DEFAULT_YAML));
+    let content: String = super::read_file(&filename).unwrap_or_else(|| String::from(DEFAULT_YAML));
     super::parse_yaml(content)
   }
 }
