@@ -13,6 +13,7 @@ pub struct Metrics {
 }
 
 impl Metrics {
+
   pub fn new(conf: Value) -> Result<Metrics, Error> {
     let registry = Registry::new();
     let config = conf;

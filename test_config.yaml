@@ -1,0 +1,14 @@
+server:
+  port: 9090
+  host: "127.0.0.1"
+  endpoint: "/metrics"
+  health: "/admin/health"
+
+pinger:
+  debug: false
+  interval: 10
+  metric-name: "pinger_metrics"
+  hosts:
+    - "https://en.wikipedia.org/"
+    - "https://www.facebook.com"
+    - "https://www.google.com"

@@ -1,11 +1,12 @@
 # pinger-rs
-Lifetime checker based on Rust :gear:
+
+HTTP Status checker based on Rust :gear:
 
 It will export the data to the endpoint that can be scraped by Prometheus :fire:
 
 ## Features
 - [x] Configurable metrics endpoint
-- [x] Configurable hosts to be called
+- [x] Configurable urls/hosts to be called
 - [x] Configurable polling duration
 - [x] Configurable metrics name
 - [x] Debug for every polling (Configurable)
@@ -14,12 +15,8 @@ It will export the data to the endpoint that can be scraped by Prometheus :fire:
 
 ## How to run
 1. Make sure `cargo` and `rustc` are installed
-2. Check out the `default.yaml` at `config` directory
+2. Check out the `default.yaml` at `config` directory or `test_config.yaml`
 3. Do the changes necessary
-4. `cargo run`
+4. Either run `cargo run` or `cargo build` and then `./start.sh` (You can check the content of `start.sh` on how to run it)
 5. Wait until the dispatched requests
-6. Go to endpoint `/metrics` or the endpoint that has been configured
-
-### Dev Note
-This project is basically just another practice, just like testing the water on the Rust world.
-There was a CRUD microservice based on Diesel and Rocket. But I wasn't so satisfied with the result.
+6. Go to the endpoint `/metrics` or to the endpoint that has been configured
