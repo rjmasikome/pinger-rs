@@ -8,4 +8,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: pinger-rs/pinger-rs
+    ports:
+      - 9091:9090
+    image: rjmasikome/pinger-rs
