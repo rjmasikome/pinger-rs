@@ -1,5 +1,6 @@
 use std::io::Error;
 use std::thread;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use chrono::prelude::*;
 use curl::easy::Easy;
@@ -13,7 +14,6 @@ pub struct Metrics {
 }
 
 impl Metrics {
-
   pub fn new(conf: Value) -> Result<Metrics, Error> {
     let registry = Registry::new();
     let config = conf;
@@ -21,7 +21,6 @@ impl Metrics {
   }
 
   fn polling(&self, counter_vec: CounterVec, urls: Vec<Value>) {
-
     let interval_ms = self.config["pinger"]["interval"]
       .as_u64() // Can't parse straight to u32
       .unwrap_or(10) as u32
@@ -41,15 +40,29 @@ impl Metrics {
 
         for url_serde in urls.clone() {
           let url = url_serde.as_str().expect("URL must be set");
+          let start = SystemTime::now();
+          let start_ts = start
+            .duration_since(UNIX_EPOCH)
+            .expect("Time went backwards")
+            .as_millis();
 
           easy.url(url).unwrap();
           easy.write_function(|data| Ok(data.len())).unwrap();
-          let dt = Local::now();
 
+          let dt = Local::now();
           match easy.perform() {
             Ok(_) => {
               let code = easy.response_code().unwrap().to_string();
-              counter_vec.with_label_values(&[&code, url]).inc();
+              let finish = SystemTime::now();
+              let finish_ts = finish
+                .duration_since(UNIX_EPOCH)
+                .expect("Time went backwards")
+                .as_millis();
+
+              counter_vec
+                .with_label_values(&[&code, url])
+                .inc_by((finish_ts - start_ts) as f64);
+
               if debug {
                 println!("{}: {} - {}", dt, code, url);
               }
