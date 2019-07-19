@@ -5,7 +5,7 @@ server:
   health: "/admin/health"
 
 pinger:
-  debug: false
+  debug: true
   interval: 10
   metric-name: "pinger_metrics"
   hosts:

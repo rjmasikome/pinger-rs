@@ -5,4 +5,4 @@ COPY . .
 
 RUN cargo install --path .
 
-CMD ["pinger-rs"]
+CMD ["pinger-rs", "config.yml"]
