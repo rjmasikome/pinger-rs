@@ -20,7 +20,7 @@ impl Metrics {
     Ok(Metrics { registry, config })
   }
 
-  fn polling(&self, counter_vec: CounterVec, urls: Vec<Value>) {
+  fn polling(&self, counter_rate_vec: CounterVec, counter_lat_vec: CounterVec, urls: Vec<Value>) {
     let interval_ms = self.config["pinger"]["interval"]
       .as_u64() // Can't parse straight to u32
       .unwrap_or(10) as u32
@@ -59,7 +59,11 @@ impl Metrics {
                 .expect("Time went backwards")
                 .as_millis();
 
-              counter_vec
+              // Increase Rate by 1
+              counter_rate_vec.with_label_values(&[&code, url]).inc();
+
+              // Increase Latency by the difference of timestamps
+              counter_lat_vec
                 .with_label_values(&[&code, url])
                 .inc_by((finish_ts - start_ts) as f64);
 
@@ -80,17 +84,26 @@ impl Metrics {
       .as_str()
       .unwrap_or("pinger_metrics");
 
-    let counter_opts = Opts::new(metrics_name, "test counter help");
-    let counter = CounterVec::new(counter_opts, &["code", "url"]).unwrap();
+    let metrics_suffix = self.config["pinger"]["rate-sufix"]
+      .as_str()
+      .unwrap_or("_rates");
+
+    let metrics_name_rates = [metrics_name, metrics_suffix].concat();
+    let counter_opts = Opts::new(metrics_name_rates, "Rates Counter".to_string());
+    let counter_rates = CounterVec::new(counter_opts, &["code", "url"]).unwrap();
+
+    let counter_lat_opts = Opts::new(metrics_name, "Latency counter");
+    let counter_lat = CounterVec::new(counter_lat_opts, &["code", "url"]).unwrap();
 
     // Register Counter
-    self.registry.register(Box::new(counter.clone())).unwrap();
+    self.registry.register(Box::new(counter_rates.clone())).unwrap();
+    self.registry.register(Box::new(counter_lat.clone())).unwrap();
 
-    let urls: Vec<Value> = self.config["pinger"]["hosts"]
+    let urls: Vec<Value> = self.config["pinger"]["targets"]
       .as_sequence()
       .unwrap()
       .to_vec();
 
-    self.polling(counter.clone(), urls);
+    self.polling(counter_rates, counter_lat, urls);
   }
 }

@@ -8,7 +8,7 @@ pinger:
   debug: true
   interval: 10
   metric-name: "pinger_metrics"
-  hosts:
+  targets:
     - "https://en.wikipedia.org/"
     - "https://www.facebook.com"
     - "https://www.google.com"

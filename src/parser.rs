@@ -34,7 +34,7 @@ pub mod config {
     # interval in second
     interval: 5
     metric-name: "pinger_metrics"
-    hosts:
+    targets:
       - "https://en.wikipedia.org/"
       - "http://example.com/""#;
 

@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-./target/debug/pinger-rs test_config.yaml
+./target/debug/pinger-rs config.yml
