@@ -20,3 +20,6 @@ It will export the data to the endpoint that can be scraped by Prometheus :fire:
 4. Either run `cargo run` or `cargo build` and then `./start.sh` (You can check the content of `start.sh` on how to run it)
 5. Wait until the dispatched requests
 6. Go to the endpoint `/metrics` or to the endpoint that has been configured
+
+## License
+MIT

@@ -96,8 +96,14 @@ impl Metrics {
     let counter_lat = CounterVec::new(counter_lat_opts, &["code", "url"]).unwrap();
 
     // Register Counter
-    self.registry.register(Box::new(counter_rates.clone())).unwrap();
-    self.registry.register(Box::new(counter_lat.clone())).unwrap();
+    self
+      .registry
+      .register(Box::new(counter_rates.clone()))
+      .unwrap();
+    self
+      .registry
+      .register(Box::new(counter_lat.clone()))
+      .unwrap();
 
     let urls: Vec<Value> = self.config["pinger"]["targets"]
       .as_sequence()

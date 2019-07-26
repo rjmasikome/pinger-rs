@@ -24,25 +24,11 @@ pub mod config {
 
   use serde_yaml::Value;
 
-  const DEFAULT_YAML: &'static str = r#"
-  server:
-    port: 8080
-    host: "127.0.0.1"
-    endpoint: "/metrics"
-  pinger:
-    debug: true
-    # interval in second
-    interval: 5
-    metric-name: "pinger_metrics"
-    targets:
-      - "https://en.wikipedia.org/"
-      - "http://example.com/""#;
-
   pub fn get_config(opt_filename: Option<&String>) -> Option<Value> {
     let default_filename = "./config/default.yaml".to_string();
     let filename = opt_filename.unwrap_or(&default_filename);
 
-    let content: String = super::read_file(&filename).unwrap_or_else(|| String::from(DEFAULT_YAML));
+    let content: String = super::read_file(&filename).expect("URL must be set");
     super::parse_yaml(content)
   }
 }
