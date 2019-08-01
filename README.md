@@ -15,8 +15,8 @@ More features are coming soon.
 - [x] Configurable healthcheck endpoint (e.g for Kubernetes)
 - [x] Config file name as executable argument parameter
 - [x] Counter, Gauge and Histogram metrics included
-- [] Configurable buckets on histogram metric
-- [] Configurable target alias
+- [ ] Configurable buckets on histogram metric
+- [ ] Configurable target alias
 
 ## How to run
 1. Make sure `cargo` and `rustc` are installed
