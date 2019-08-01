@@ -1,17 +1,22 @@
 # pinger-rs
 
-HTTP Status checker based on Rust :gear:
+HTTP Status checker and latency metrics exporter based on Rust :gear:
 
 It will export the data to the endpoint that can be scraped by Prometheus :fire:
 
+More features are coming soon.
+
 ## Features
 - [x] Configurable metrics endpoint
-- [x] Configurable urls/hosts to be called
+- [x] Configurable url targets to be called
 - [x] Configurable polling duration
 - [x] Configurable metrics name
 - [x] Debug for every polling (Configurable)
 - [x] Configurable healthcheck endpoint (e.g for Kubernetes)
 - [x] Config file name as executable argument parameter
+- [x] Counter, Gauge and Histogram metrics included
+- [] Configurable buckets on histogram metric
+- [] Configurable target alias
 
 ## How to run
 1. Make sure `cargo` and `rustc` are installed
