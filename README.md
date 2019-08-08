@@ -20,7 +20,7 @@ More features are coming soon.
 
 ## How to run
 1. Make sure `cargo` and `rustc` are installed
-2. Check out the `default.yaml` at `config` directory or `test_config.yaml`
+2. Check out the `default.yaml` at `config` directory or `config.yaml`
 3. Do the changes necessary
 4. Either run `cargo run` or `cargo build` and then `./start.sh` (You can check the content of `start.sh` on how to run it)
 5. Wait until the dispatched requests
